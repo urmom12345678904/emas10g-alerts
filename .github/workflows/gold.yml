@@ -1,11 +1,11 @@
 name: gold-alerts
 on:
   schedule:
-    - cron: “*/15 * * * *”
+    - cron: "*/15 * * * *"
   workflow_dispatch:
     inputs:
       test:
-        description: “Also send a test message”
+        description: "Also send a test message"
         type: boolean
         default: true
 jobs:
@@ -23,7 +23,7 @@ jobs:
           key: gold-state-${{ github.run_id }}
           restore-keys: gold-state-
       - name: Send test message
-        if: ${{ github.event_name == ‘workflow_dispatch’ && inputs.test }}
-        run: python3 alerts.py —test
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.test }}
+        run: python3 alerts.py --test
       - name: Check gold price
-        run: python3 alerts.py —once
+        run: python3 alerts.py --once
