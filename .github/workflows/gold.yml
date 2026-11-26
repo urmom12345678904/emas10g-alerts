@@ -1,0 +1,29 @@
+name: gold-alerts
+on:
+  schedule:
+    - cron: “*/15 * * * *”
+  workflow_dispatch:
+    inputs:
+      test:
+        description: “Also send a test message”
+        type: boolean
+        default: true
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    env:
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      TARGET_10G_MYR: ${{ secrets.TARGET_10G_MYR }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/cache@v4
+        with:
+          path: alerts_state.json
+          key: gold-state-${{ github.run_id }}
+          restore-keys: gold-state-
+      - name: Send test message
+        if: ${{ github.event_name == ‘workflow_dispatch’ && inputs.test }}
+        run: python3 alerts.py —test
+      - name: Check gold price
+        run: python3 alerts.py —once
